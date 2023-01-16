@@ -11,5 +11,19 @@ L'utilisateur choisit
 - une zone , clique sur des POI, une date et une durée de sejour  > l'algo propose un/des itinéraires 
 - une zone/point de départ , un ou des centres d'intérêts (champ type) , choisit une date et une durée > l'algo propose un/des itinéraires
 
-- l'utilisateur entre un itinéraire (point A et point B), et en fonction des POI, l'application lui propose différents itinéraires qui passent par des POI.
+## -> Conclusion :
+Input : 
+- une adresse de départ 
+(option 2 : une adresse d'arrivée) 
+- le nombre de POI
+- le nombre de km 
+- les jours influent sur le nbre de POI
 
+Ajouter des filtres : 
+- type de POI
+- attention aux restaurants et hotels 
+
+
+Output : 
+- itinéraire optimale dans le cluster le plus proche (optimal) du point de départ.
+- Doit ressortir un mélange de type de POI
