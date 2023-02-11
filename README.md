@@ -82,9 +82,9 @@ Le champ **type** du fichier json contient une liste des types de POI.
 Ce champ type est le paramètre principal qui pourra servir dans l’interface utilisateur pour filtrer ses centres d’intérêts
 
 ## 2.2 Table classes_types
-Nous avons construit cette table et ce « level » à partir des liens indiqués dans le fichier csv
+Nous avons construit cette table et ce « level » à partir des liens indiqués dans le [fichier csv](https://gitlab.adullact.net/adntourisme/datatourisme/ontology/-/raw/master/Documentation/classes_fr.csv) décrit dans le gitlab datatourisme
 
-https://gitlab.adullact.net/adntourisme/datatourisme/ontology/-/raw/master/Documentation/classes_fr.csv
+
 
 Au niveau  1,  il y’a 4 grands types de POI : 
 - **Product** : un objet touristique qui peut se consommer (ex: une chambre d'hôtel, une pratique d'activité, une visite guidée, ...)
@@ -106,7 +106,87 @@ order by level;
 | 5     | 3       |
 | null  | 56      |
 
+> Ce type est géré de manière hiérarchique pour une majorité de code. Par contre, certains types correspondent à une précision d’information (cf. valeurs null dans level). Ceci pourrait permettre de faire des filtres supplémentaires 
+
+En se positionnant sur le niveau 2, cela représente la volumétrie de POI suivante
+
+```sql
+select c2.parent_type, c2.type, c2.label_type, count(*) from classes_types c2
+join itineraire_types t on t.type = c2.type and c2.level = 2
+group by c2.parent_type, c2.type, c2.label_type
+order by  1,3;
+```
+
+| parent_type           | type                     | label_type                            | count |
+|-----------------------|--------------------------|---------------------------------------|-------|
+| EntertainmentAndEvent | SaleEvent                | Evènement commercial                  | 1     |
+| EntertainmentAndEvent | CulturalEvent            | Évènement culturel                    | 7     |
+| EntertainmentAndEvent | SocialEvent              | Evènement social                      | 1     |
+| PlaceOfInterest       | Store                    | Commerce de détail                    | 10053 |
+| PlaceOfInterest       | TastingProvider          | Fournisseur de dégustation            | 2287  |
+| PlaceOfInterest       | Accommodation            | Hébergement                           | 4255  |
+| PlaceOfInterest       | MedicalPlace             | Lieu de santé                         | 276   |
+| PlaceOfInterest       | ActivityProvider         | Prestataire d'activité                | 4     |
+| PlaceOfInterest       | ServiceProvider          | Prestataire de service                | 476   |
+| PlaceOfInterest       | FoodEstablishment        | Restauration                          | 10614 |
+| PlaceOfInterest       | TouristInformationCenter | Service d'information touristique     | 516   |
+| PlaceOfInterest       | ConvenientService        | Service pratique                      | 309   |
+| PlaceOfInterest       | CulturalSite             | Site culturel                         | 5355  |
+| PlaceOfInterest       | BusinessPlace            | Site d'affaires                       | 155   |
+| PlaceOfInterest       | NaturalHeritage          | Site naturel                          | 413   |
+| PlaceOfInterest       | SportsAndLeisurePlace    | Site sportif, récréatif et de loisirs | 11364 |
+| PlaceOfInterest       | Transport                | Transport                             | 409   |
+| Product               | Rental                   | Location                              | 832   |
+| Product               | Practice                 | Pratique                              | 655   |
+| Product               | Visit                    | Visite                                | 136   |
+| Tour                  | CyclingTour              | Itinéraire cyclable                   | 404   |
+| Tour                  | HorseTour                | Itinéraire équestre                   | 32    |
+| Tour                  | FluvialTour              | Itinéraire fluvial ou maritime        | 11    |
+| Tour                  | WalkingTour              | Itinéraire pédestre                   | 1210  |
+| Tour                  | RoadTour                 | Itinéraire routier                    | 182   |
 
 
+## 2.3 Table unique POI
+Pour simplifier nos premières études nous avons décidé de filtrer sur le type du niveau 2 et de créer une table unique avec les champs uniquement nécessaires 
 
+Focalisation sur les types suivants
+
+```python
+categories = {
+    'WalkingTour': 'Itinéraire pédestre',
+    'CyclingTour': 'Itinéraire cyclable',
+    'HorseTour': 'Itinéraire équestre',
+    'RoadTour': 'Itinéraire routier',
+    'FluvialTour': 'Itinéraire fluvial ou maritime',
+    'UnderwaterRoute': 'Itinéraire sous-marin',
+    'Accommodation': 'Hébergement',
+    'FoodEstablishment': 'Restauration',
+    'CulturalSite': 'Site culturel',
+    'NaturalHeritage': 'Site naturel',
+    'SportsAndLeisurePlace': 'Site sportif, récréatif et de loisirs',
+}
+```
+Dans la structure suivante
+![Diagram](https://github.com/Slimanee/Itineraire-de-Vacances/blob/3f6b29531be517b2198e347b2225f62037e1c927/Doc/table%20POI%20simplifi%C3%A9.drawio.svg)
+
+Cf. volumétrie
+```sql
+select t.label_type , p.type,   count(*) from poi p
+join  classes_types t on t.type = p.type 
+group by t.label_type , p.type 
+order by 2 ;
+```
+
+| label_type                            | type                  | count |
+|---------------------------------------|-----------------------|-------|
+| Hébergement                           | Accommodation         | 4260  |
+| Site culturel                         | CulturalSite          | 5371  |
+| Itinéraire cyclable                   | CyclingTour           | 375   |
+| Itinéraire fluvial ou maritime        | FluvialTour           | 11    |
+| Restauration                          | FoodEstablishment     | 9672  |
+| Itinéraire équestre                   | HorseTour             | 31    |
+| Site naturel                          | NaturalHeritage       | 411   |
+| Itinéraire routier                    | RoadTour              | 182   |
+| Site sportif, récréatif et de loisirs | SportsAndLeisurePlace | 7647  |
+| Itinéraire pédestre                   | WalkingTour           | 1210  |
 
