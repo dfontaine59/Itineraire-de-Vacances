@@ -167,7 +167,7 @@ categories = {
 }
 ```
 Dans la structure suivante
-![Diagram](https://github.com/Slimanee/Itineraire-de-Vacances/blob/3f6b29531be517b2198e347b2225f62037e1c927/Doc/table%20POI%20simplifi%C3%A9.drawio.svg)
+![Diagram](https://github.com/Slimanee/Itineraire-de-Vacances/blob/1a289ba454166c693f7d497c5f044e333776bc12/Doc/table%20POI%20simplifi%C3%A9.drawio.svg)
 
 Cf. volumétrie
 ```sql
