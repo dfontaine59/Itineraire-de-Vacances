@@ -61,7 +61,8 @@ Nous allons ensuite travailler sur la colonnne "type" des POI, qui nous permettr
 ---
 # ETAPE 2 - Modèle de données POSTGRES
 
-## 2.1 Dans un premier temps nous avons intégré les données dans postgres selon le schéma suivant
+## 2.1 Premier modèle 
+Dans un premier temps nous avons intégré les données dans postgres selon le schéma suivant
 
 ![Diagram](https://github.com/Slimanee/Itineraire-de-Vacances/blob/e91044e6546c32e9fcf0c48a0030e5a5e0369eb0/Doc/Mod%C3%A8le%20donn%C3%A9es%20postgres.drawio.svg)
 
@@ -83,7 +84,6 @@ Ce champ type est le paramètre principal qui pourra servir dans l’interface u
 
 ## 2.2 Table classes_types
 Nous avons construit cette table et ce « level » à partir des liens indiqués dans le [fichier csv](https://gitlab.adullact.net/adntourisme/datatourisme/ontology/-/raw/master/Documentation/classes_fr.csv) décrit dans le gitlab datatourisme
-
 
 
 Au niveau  1,  il y’a 4 grands types de POI : 
