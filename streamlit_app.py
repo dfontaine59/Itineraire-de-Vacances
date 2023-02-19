@@ -1,13 +1,16 @@
-from source_communes import SourceCommunes
 from source_poi import SourcePoi
+from destination import Destination
+from neighbours import get_n_closest_points
+import pandas as pd
 import streamlit as st
 
 
 @st.cache_data
 def retrieve():
-    return SourcePoi().retrieve(), SourceCommunes().retrieve()
+    d = Destination()
+    return d.retrieve('poi'), d.retrieve('communes'), d.retrieve('clusters')
 
-df_poi, df_communes = retrieve()
+df_poi, df_communes, df_clusters = retrieve()
 
 st.sidebar.title("Itinéraire de vacances")
 jours = st.sidebar.slider(
@@ -17,7 +20,7 @@ jours = st.sidebar.slider(
     value=2,
     step=1
 )
-jours = st.sidebar.slider(
+visites = st.sidebar.slider(
     label='Nombre de visites par jour',
     min_value=1,
     max_value=8,
@@ -40,7 +43,8 @@ commune = st.sidebar.selectbox(
 df_communes = df_communes[df_communes['commune'] == commune]
 df_poi = df_poi[df_poi['type'].map(lambda x: any([t in x for t in types]))]
 
-st.write("POI (10 premiers)", df_poi.head(10))
+st.write("POI (10 premiers)", df_poi.head(5))
 st.write("Commune", df_communes)
-st.map(df_poi[['latitude', 'longitude']])
-st.map(df_communes[['latitude', 'longitude']])
+st.map(df_poi)
+centroids = get_n_closest_points(df_communes, df_clusters, jours)
+st.map(pd.concat([df_communes, centroids]))

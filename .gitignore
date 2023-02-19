@@ -1,0 +1,9 @@
+# MacOS generated files
+.DS_Store
+
+# VSCode configuration
+.vscode/
+
+# Python cache/virtual environment
+__pycache__/
+venv/

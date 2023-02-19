@@ -1,11 +1,9 @@
 import pandas as pd
-from source_generic import SourceGeneric
 
 
-class SourceCommunes(SourceGeneric):
+class SourceCommunes:
 
     COMMUNES_URL = 'https://static.data.gouv.fr/resources/communes-de-france-base-des-codes-postaux/20200309-131459/communes-departement-region.csv'
-    TABLE = 'communes'
 
     def extract(self):
         return pd.read_csv(self.COMMUNES_URL)

@@ -1,12 +1,10 @@
 import pandas as pd
 import requests
-from source_generic import SourceGeneric
 
 
-class SourcePoi(SourceGeneric):
+class SourcePoi:
 
     POI_URL = 'https://diffuseur.datatourisme.fr/webservice/bfadcf44012b7156ca3e297b468c4f75/380d2fe9-2c9c-4190-a79e-8301b37d03fb'
-    TABLE = 'poi'
     TYPES = {
         'WalkingTour': 'Itinéraire pédestre',
         'CyclingTour': 'Itinéraire cyclable',
