@@ -3,3 +3,5 @@ SQLAlchemy==2.0.3
 psycopg2-binary==2.9.5
 geopy==2.3.0
 k-means-constrained==0.7.2
+pyroutelib3==1.7.2
+streamlit-folium==0.11.1

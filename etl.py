@@ -12,7 +12,7 @@ d = Destination()
 df_communes = sc.transform(sc.extract())
 df_poi = sp.transform(sp.extract())
 df_poi['cluster'], centroids = get_clusters(df_poi)  # Last about 1 hour ! Maybe split by departement
-df_clusters = pd.DataFrame(centroids, columns=['latitude', 'longitude']).reset_index()
+df_clusters = pd.DataFrame(centroids, columns=['latitude', 'longitude']).rename_axis('cluster').reset_index()
 
 d.load(df_communes, 'communes')
 d.load(df_poi, 'poi')
