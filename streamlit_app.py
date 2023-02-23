@@ -7,6 +7,16 @@ import streamlit as st
 from streamlit_folium import st_folium
 
 
+st.set_page_config(
+    page_title="Itinéraire de vacances",
+    page_icon="🏁",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'About': "A project from Data Scientest - December 2022"
+    }
+)
+
 @st.cache_data
 def retrieve():
     d = Destination()
@@ -53,4 +63,4 @@ df_poi = df_poi[df_poi['type'].map(lambda x: any([t in x for t in types]))]
 for jour, cluster in enumerate(df_centroids.index):
     df_zoom = df_poi[df_poi.cluster == cluster].head(visites)
     st.write(f"Jour n°{jour + 1}", df_zoom)
-    st_folium(get_map(df_zoom, mode), width=700)
+    st_folium(get_map(df_zoom, mode), width=1000)
