@@ -1,0 +1,8 @@
+# creation image appli streamlit
+docker image build . -t iti_streamlit:latest -f Dockerfile_streamlit
+
+# run image streamlit
+# exemple docker container run -it --rm --name authen_test_from_compose --network docker_network_eval -e "LOG=1" --mount type=volume,src=common_volume,dst=/docker_test authen_test
+# docker container run -it --name iti_streamlit_compose iti_streamlit:latest
+docker container run -p 8501:8501 --name iti_streamlit_compose iti_streamlit:latest
+
