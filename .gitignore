@@ -7,6 +7,3 @@
 # Python cache/virtual environment
 __pycache__/
 venv/
-
-# Folium Map cache
-tilescache/

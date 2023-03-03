@@ -1,27 +1,59 @@
 import folium
+import pandas as pd
 import route
+import streamlit as st
 
 
+def type_to_icon(s):
+    if "Hébergement" in s:
+        return "icons/lodging.png"
+    if "Restauration" in s:
+        return "icons/restaurant.png"
+    if "Site culturel" in s:
+        return "icons/museum.png"
+    if "Site naturel" in s:
+        return "icons/park.png"
+    if "Site sportif et de loisirs" in s:
+        return "icons/golf.png"
+    return "icons/business.png"
+
+
+def array_to_string(s):
+    return ", ".join([x.strip('"') for x in s.strip("{}").split(",")]) if s else ""
+
+
+def float_to_5dstring(s):
+    return "" if pd.isnull(s) else f"{int(s):05d}"
+
+
+@st.cache_resource
 def get_map(df, mode):
     m = folium.Map(control_scale=True)
 
-    for i,row in df.iterrows():
+    for row in df.itertuples():
+        html = (
+            f"<b>{row.nom}</b><br>"
+            f"{row.description}<br>"
+            f"#️⃣ {array_to_string(row.type)}<br>"
+            f"☎️ {array_to_string(row.telephone)}<br>"
+            f"✉️ {array_to_string(row.email)}<br>"
+            f"@ {array_to_string(row.site_internet)}<br>"
+            f"🏠 {array_to_string(row.adresse)} {float_to_5dstring(row.code_postal)} {array_to_string(row.ville)}"
+        )
         folium.Marker(
-            location=[row['latitude'],row['longitude']],
-            popup=row.commentaire,
+            location=[row.latitude, row.longitude],
+            popup=folium.Popup(html, min_width=400, max_width=400),
             tooltip=row.nom,
-            icon=folium.Icon(icon='home', prefix='fa')
+            icon=folium.features.CustomIcon(
+                icon_image=type_to_icon(row.type), icon_size=(50, 50)
+            ),
         ).add_to(m)
 
-    df = df[['latitude','longitude']]
-    sw = df.min().values.tolist()
-    ne = df.max().values.tolist()
-    m.fit_bounds([sw, ne], max_zoom=14) 
+    df_coord = df[["latitude", "longitude"]]
+    locations = route.get_route(df_coord.values.tolist(), mode)
+    folium.PolyLine(locations, weight=5).add_to(m)
 
-    latlon_start = df.values.tolist()
-    latlon_end = latlon_start[1:]
-    for start, end in zip(latlon_start, latlon_end):
-        routeLatLons = route.get_route(start, end, mode)
-        folium.PolyLine(routeLatLons, weight=5, opacity=1).add_to(m)
-
+    sw = df_coord.min().values.tolist()
+    ne = df_coord.max().values.tolist()
+    m.fit_bounds([sw, ne], padding=(100, 100))
     return m

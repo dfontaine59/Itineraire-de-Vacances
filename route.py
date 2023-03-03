@@ -1,18 +1,24 @@
-from pyroutelib3 import Router
+import openrouteservice as ors
 
+
+client = ors.Client(key="5b3ce3597851110001cf624837a94f6f86e844b198f1c81cfefd7b77")
 
 mode_map = {
-    'Voiture': 'car',
-    'Vélo': 'cycle',
-    'Pédestre': 'foot',
-    'Cheval': 'horse'
+    "Voiture": "driving-car",
+    "Camion": "driving-hgv",
+    "Vélo": "cycling-regular",
+    "Vélo de route": "cycling-road",
+    "VTT": "cycling-mountain",
+    "Pédestre": "foot-walking",
+    "Randonnée": "foot-hiking",
 }
 
-def get_route(start, end, mode):
-    router = Router(mode_map[mode])
-    node_start = router.findNode(*start)
-    node_end = router.findNode(*end)
-    status, route = router.doRoute(node_start, node_end)
-    if status == 'success':
-        return list(map(router.nodeLatLon, route))
-    return []
+
+def get_route(coordinates, mode):
+    route = client.directions(
+        coordinates=[list(reversed(c)) for c in coordinates],
+        profile=mode_map[mode],
+        format="geojson",
+        optimize_waypoints=True,
+    )
+    return [list(reversed(c)) for c in route["features"][0]["geometry"]["coordinates"]]
