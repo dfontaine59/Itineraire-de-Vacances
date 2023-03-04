@@ -49,11 +49,12 @@ def get_map(df, mode):
             ),
         ).add_to(m)
 
-    df_coord = df[["latitude", "longitude"]]
-    locations = route.get_route(df_coord.values.tolist(), mode)
+    locations = route.get_route(df[["latitude", "longitude"]].values.tolist(), mode)
     folium.PolyLine(locations, weight=5).add_to(m)
 
-    sw = df_coord.min().values.tolist()
-    ne = df_coord.max().values.tolist()
-    m.fit_bounds([sw, ne], padding=(100, 100))
+    df_loc = pd.DataFrame(locations)
+    sw = df_loc.min().values.tolist()
+    ne = df_loc.max().values.tolist()
+    m.fit_bounds([sw, ne])
+
     return m
