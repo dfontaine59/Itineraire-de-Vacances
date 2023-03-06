@@ -1,0 +1,26 @@
+version: '3.9'
+
+networks:
+  network_eval:
+
+services:
+  fastapi:
+    image: iti_fastapi:latest
+    container_name: iti_fastapi_compose
+    networks: 
+      - network_eval
+    ports: 
+      - target: 8000
+        published: 8000
+  
+  iti_streamlit:
+    depends_on:
+        fastapi:
+          condition: service_started
+    image: iti_streamlit:latest
+    container_name: iti_streamlit_compose
+    networks: 
+      - network_eval
+    ports: 
+      - target: 8501
+        published: 8501
