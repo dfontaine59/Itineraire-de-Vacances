@@ -6,6 +6,10 @@ from source_poi import SourcePoi
 import streamlit as st
 from streamlit_folium import st_folium
 
+# définition de l'adresse de l'API
+api_address = 'fast_api'
+# port de l'API
+api_port = 8000
 
 st.set_page_config(
     page_title="Itinéraire de vacances",
@@ -17,14 +21,16 @@ st.set_page_config(
 )
 
 if "df_communes" not in st.session_state:
-    req = requests.get(f"http://127.0.0.1:8000/communes")
+    #req = requests.get(f"http://127.0.0.1:8000/communes")
+    req = requests.get(f"http://fastapi:8000/communes")
     st.session_state["df_communes"] = pd.read_json(req.json())
 df_communes = st.session_state.df_communes
 
 
 @st.cache_data
 def get_poi(latitude, longitude, jours):
-    req = requests.get(f"http://127.0.0.1:8000/poi/{latitude}/{longitude}/{jours}")
+    #req = requests.get(f"http://127.0.0.1:8000/poi/{latitude}/{longitude}/{jours}")
+    req = requests.get(f"http://fastapi:8000/poi/{latitude}/{longitude}/{jours}")
     return pd.read_json(req.json())
 
 
