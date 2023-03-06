@@ -21,16 +21,16 @@ st.set_page_config(
 )
 
 if "df_communes" not in st.session_state:
-    #req = requests.get(f"http://127.0.0.1:8000/communes")
-    req = requests.get(f"http://fastapi:8000/communes")
+    req = requests.get(f"http://127.0.0.1:8000/communes")
+    #req = requests.get(f"http://fastapi:8000/communes")
     st.session_state["df_communes"] = pd.read_json(req.json())
 df_communes = st.session_state.df_communes
 
 
 @st.cache_data
 def get_poi(latitude, longitude, jours):
-    #req = requests.get(f"http://127.0.0.1:8000/poi/{latitude}/{longitude}/{jours}")
-    req = requests.get(f"http://fastapi:8000/poi/{latitude}/{longitude}/{jours}")
+    req = requests.get(f"http://127.0.0.1:8000/poi/{latitude}/{longitude}/{jours}")
+    #req = requests.get(f"http://fastapi:8000/poi/{latitude}/{longitude}/{jours}")
     return pd.read_json(req.json())
 
 
@@ -57,12 +57,13 @@ df_poi = df_poi[df_poi["type"].map(lambda x: any([t in x for t in types]))]
 
 col1, col2 = st.columns(2)
 for jour, df_cluster in enumerate(dict(tuple(df_poi.groupby("cluster_id"))).values()):
-    df_cluster = df_cluster.head(visites)
+    df_hotel_restaurants = df_cluster[df_cluster["type"].str.contains("Hébergement|Restauration")]
+    df_cluster = df_cluster[~df_cluster["type"].str.contains("Hébergement|Restauration")].head(visites)
     if jour % 2 == 0:
         with col1:
             st.write(f"Jour n°{jour + 1}", df_cluster)
-            st_folium(get_map(df_cluster, mode), width=700)
+            st_folium(get_map(df_communes, df_cluster, df_hotel_restaurants, mode), width=700)
     else:
         with col2:
             st.write(f"Jour n°{jour + 1}", df_cluster)
-            st_folium(get_map(df_cluster, mode), width=700)
+            st_folium(get_map(df_communes, df_cluster, df_hotel_restaurants, mode), width=700)

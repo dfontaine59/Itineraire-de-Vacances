@@ -27,10 +27,18 @@ def float_to_5dstring(s):
 
 
 @st.cache_resource
-def get_map(df, mode):
+def get_map(df_communes, df, df_hotel_restaurant, mode):
     m = folium.Map(control_scale=True)
 
-    for row in df.itertuples():
+    folium.Marker(
+        location=[df_communes.iloc[0].latitude, df_communes.iloc[0].longitude],
+        tooltip=f"Point de départ: {df_communes.iloc[0].commune} ({df_communes.iloc[0].departement})",
+        icon=folium.features.CustomIcon(
+            icon_image=type_to_icon("Depart"), icon_size=(50, 50)
+        ),
+    ).add_to(m)
+
+    for row in pd.concat([df, df_hotel_restaurant]).itertuples():
         html = (
             f"<b>{row.nom}</b><br>"
             f"{row.description}<br>"
@@ -49,10 +57,10 @@ def get_map(df, mode):
             ),
         ).add_to(m)
 
-    locations = route.get_route(df[["latitude", "longitude"]].values.tolist(), mode)
+    locations = route.get_route(df[["latitude", "longitude"]].values.tolist() + [[df_communes.iloc[0].latitude, df_communes.iloc[0].longitude]], mode)
     folium.PolyLine(locations, weight=5).add_to(m)
 
-    df_loc = pd.DataFrame(locations)
+    df_loc = pd.DataFrame(locations + df_hotel_restaurant[["latitude", "longitude"]].values.tolist())
     sw = df_loc.min().values.tolist()
     ne = df_loc.max().values.tolist()
     m.fit_bounds([sw, ne])
