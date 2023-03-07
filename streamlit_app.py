@@ -5,11 +5,15 @@ import route
 from source_poi import SourcePoi
 import streamlit as st
 from streamlit_folium import st_folium
+import os
 
-# définition de l'adresse de l'API
-api_address = 'fast_api'
-# port de l'API
-api_port = 8000
+# définition de l'adresse et port de l'API passé en paramètre via Dockerfile, sinon valeur par défaut
+# ceci permet d'utiliser l'application soit avec docker soit en local
+if "address_port" not in st.session_state:
+    st.session_state["address_port"] = os.getenv('API_ADDRESS_HOST','127.0.0.1:8000')
+address_port = st.session_state["address_port"]
+
+print(address_port)
 
 st.set_page_config(
     page_title="Itinéraire de vacances",
@@ -21,16 +25,16 @@ st.set_page_config(
 )
 
 if "df_communes" not in st.session_state:
-    req = requests.get(f"http://127.0.0.1:8000/communes")
     #req = requests.get(f"http://fastapi:8000/communes")
+    req = requests.get(f"http://{address_port}/communes")
+
     st.session_state["df_communes"] = pd.read_json(req.json())
 df_communes = st.session_state.df_communes
 
-
 @st.cache_data
 def get_poi(latitude, longitude, jours):
-    req = requests.get(f"http://127.0.0.1:8000/poi/{latitude}/{longitude}/{jours}")
     #req = requests.get(f"http://fastapi:8000/poi/{latitude}/{longitude}/{jours}")
+    req = requests.get(f"http://{address_port}/poi/{latitude}/{longitude}/{jours}")
     return pd.read_json(req.json())
 
 
