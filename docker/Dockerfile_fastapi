@@ -11,6 +11,9 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
+# test si la version du projet a changé
+#ADD https://api.github.com/repos/Slimanee/Itineraire-de-Vacances/git/refs/heads/main version.json
+
 RUN git clone https://github.com/Slimanee/Itineraire-de-Vacances.git .
 
 RUN pip3 install -r requirements.txt

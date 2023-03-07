@@ -24,3 +24,5 @@ services:
     ports: 
       - target: 8501
         published: 8501
+    environment:
+      API_ADDRESS_HOST: fastapi:8000
