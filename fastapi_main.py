@@ -10,7 +10,7 @@ app = FastAPI()
 
 
 @app.get("/poi/{latitude}/{longitude}/{days}")
-async def poi(latitude: float, longitude: float, days: int):
+def poi(latitude: float, longitude: float, days: int):
     sql = (
         "WITH n AS (SELECT id FROM clusters "
         f"ORDER BY earth_distance(ll_to_earth(latitude, longitude), ll_to_earth({latitude}, {longitude})) "
@@ -22,7 +22,7 @@ async def poi(latitude: float, longitude: float, days: int):
 
 
 @app.get("/communes")
-async def communes():
+def communes():
     sql = "SELECT * FROM communes"
     with engine.begin() as connection:
         return pd.read_sql(text(sql), connection).to_json(orient="records")

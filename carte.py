@@ -9,13 +9,15 @@ def type_to_icon(s):
         return "icons/lodging.png"
     if "Restauration" in s:
         return "icons/restaurant.png"
-    if "Site culturel" in s:
-        return "icons/museum.png"
     if "Site naturel" in s:
         return "icons/park.png"
+    if "Site culturel" in s:
+        return "icons/museum.png"
     if "Site sportif et de loisirs" in s:
-        return "icons/golf.png"
-    return "icons/business.png"
+        return "icons/sport.png"
+    if "Start" in s:
+        return "icons/start.png"
+    return "icons/default.png"
 
 
 def array_to_string(s):
@@ -27,18 +29,18 @@ def float_to_5dstring(s):
 
 
 @st.cache_resource
-def get_map(df_communes, df, df_hotel_restaurant, mode):
+def get_map(df_communes, df, df_hotel_resto, mode):
     m = folium.Map(control_scale=True)
 
+    # Affichage du point de départ
     folium.Marker(
         location=[df_communes.iloc[0].latitude, df_communes.iloc[0].longitude],
         tooltip=f"Point de départ: {df_communes.iloc[0].commune} ({df_communes.iloc[0].departement})",
-        icon=folium.features.CustomIcon(
-            icon_image=type_to_icon("Depart"), icon_size=(50, 50)
-        ),
+        icon=folium.features.CustomIcon(icon_image=type_to_icon("Start"), icon_size=(45, 45)),
     ).add_to(m)
 
-    for row in pd.concat([df, df_hotel_restaurant]).itertuples():
+    # Affichage des points de l'itinéraire, des hotels et des restaurants
+    for row in pd.concat([df, df_hotel_resto]).itertuples():
         html = (
             f"<b>{row.nom}</b><br>"
             f"{row.description}<br>"
@@ -52,17 +54,17 @@ def get_map(df_communes, df, df_hotel_restaurant, mode):
             location=[row.latitude, row.longitude],
             popup=folium.Popup(html, min_width=400, max_width=400),
             tooltip=row.nom,
-            icon=folium.features.CustomIcon(
-                icon_image=type_to_icon(row.type), icon_size=(50, 50)
-            ),
+            icon=folium.features.CustomIcon(icon_image=type_to_icon(row.type), icon_size=(45, 45)),
         ).add_to(m)
 
+    # Calcul du trajet sans les hotels et les restaurants
     locations = route.get_route(df[["latitude", "longitude"]].values.tolist() + [[df_communes.iloc[0].latitude, df_communes.iloc[0].longitude]], mode)
     folium.PolyLine(locations, weight=5).add_to(m)
 
-    df_loc = pd.DataFrame(locations + df_hotel_restaurant[["latitude", "longitude"]].values.tolist())
-    sw = df_loc.min().values.tolist()
-    ne = df_loc.max().values.tolist()
-    m.fit_bounds([sw, ne])
+    # Centrage de la carte en fonctions des points de l'itinéraire
+    df_loc = pd.DataFrame(locations + df_hotel_resto[["latitude", "longitude"]].values.tolist())
+    south_west = df_loc.min().values.tolist()
+    north_east = df_loc.max().values.tolist()
+    m.fit_bounds([south_west, north_east])
 
     return m

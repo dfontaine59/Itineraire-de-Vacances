@@ -20,7 +20,7 @@ def get_route(coordinates, mode):
             coordinates=[list(reversed(c)) for c in coordinates],
             profile=mode_map[mode],
             format="geojson",
-            optimize_waypoints=True,
+            optimize_waypoints=True if len(coordinates) > 3 else None,
         )
     except ors.exceptions.ApiError:  # 403 ({'error': 'Quota exceeded'}) for optimize
         route = client.directions(
