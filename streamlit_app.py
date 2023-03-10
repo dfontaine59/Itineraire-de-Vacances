@@ -1,11 +1,12 @@
 from carte import get_map
+import os
 import pandas as pd
 import requests
 import route
 from source_poi import SourcePoi
 import streamlit as st
 from streamlit_folium import st_folium
-import os
+from PIL import Image
 
 
 # adresse et port de l'API pour les Dockerfile, sinon valeur par défaut pour utilisation local
@@ -32,7 +33,8 @@ def get_poi(latitude, longitude, jours):
     req = requests.get(f"http://{address_port}/poi/{latitude}/{longitude}/{jours}")
     return pd.read_json(req.json())
 
-st.sidebar.title("Itinéraire de vacances")
+
+st.sidebar.image(Image.open("icons/logo.png"))
 jours = st.sidebar.number_input("Durée du séjour", min_value=1, max_value=8, value=2)
 visites = st.sidebar.number_input(
     "Nombre de visites par jour (hors restaurant/hotel)",
