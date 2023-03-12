@@ -1,3 +1,29 @@
+# installation
+
+```
+git clone https://github.com/Slimanee/Itineraire-de-Vacances.git
+cd Itineraire-de-Vacances
+python -m venv venv
+pip install -r requirements.txt
+
+# A chaque session de terminal
+source venv/bin/activate
+```
+
+Pour lancer en local 
+```
+# Pour lancer fastapi dans le terminal 1
+uvicorn fastapi_main:app --reload
+
+# Pour lancer streamlit dans le terminal 2 (et ca lance automatiquement une page web)
+streamlit run streamlit_app.py
+```
+Pour lancer via docker
+```
+cd docker
+./launch_docker_iti.sh
+```
+
 # Présentation projet Itineraire-de-Vacances
 
 ## Traitement :
