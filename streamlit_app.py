@@ -37,7 +37,7 @@ def get_poi(latitude, longitude, jours):
 st.sidebar.image(Image.open("icons/logo.png"))
 jours = st.sidebar.number_input("Durée du séjour", min_value=1, max_value=8, value=2)
 visites = st.sidebar.number_input(
-    "Nombre de visites par jour (hors restaurant/hotel)",
+    "Nombre de visites par jour (hors restaurants/hotels)",
     min_value=1,
     max_value=8,
     value=4,
