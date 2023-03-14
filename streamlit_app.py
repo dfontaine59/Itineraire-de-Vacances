@@ -15,7 +15,7 @@ if "address_port" not in st.session_state:
 address_port = st.session_state["address_port"]
 
 st.set_page_config(
-    page_title="Itinéraire de vacances",
+    page_title="PYTrip",
     page_icon="🏁",
     layout="wide",
     menu_items={
